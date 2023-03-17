@@ -16,7 +16,9 @@ public class A3Q2 {
             }
         }
         long[] res = new long[pieces.length];
-        for(Integer e: edges.keySet()) helper(e, edges, res, map,pieces);
+        //for(Integer e: edges.keySet()) helper(e, edges, res, map,pieces);
+        for(int i=0; i<pieces.length; i++) if(edges.containsKey(i)) helper(i, edges, res, map,pieces);
+
         for(Integer e : map.keySet()) System.out.println(e+" :"+Arrays.toString(map.get(e)));
 
         for(int i=0; i<res.length; i++) {
