@@ -17,7 +17,6 @@ public class A3Q2 {
         }
         long[] res = new long[pieces.length];
         for(Integer e: edges.keySet()) helper(e, edges, res, map,pieces);
-
         for(Integer e : map.keySet()) System.out.println(e+" :"+Arrays.toString(map.get(e)));
 
         for(int i=0; i<res.length; i++) {
@@ -40,32 +39,22 @@ public class A3Q2 {
     }
 
     public static void helper(int cur_node,HashMap<Integer,ArrayList<Integer[]>> edges, long[] res, HashMap<Integer, int[]> map, long[] pieces) {
+        if(map.containsKey(cur_node)) return;
 
-        //BASE CASE: reached a leaf
-        //System.out.println(map.toString());
         int[] arr = new int[res.length];
         map.put(cur_node, arr);
+        for(int j=0; j < edges.get(cur_node).size(); j++) {
+            map.get(cur_node)[edges.get(cur_node).get(j)[0]]+=edges.get(cur_node).get(j)[1];
 
-        boolean isEnd=false;
-        for (Integer[] edge : edges.get(cur_node)) {
-            map.get(cur_node)[edge[0]]+=edge[1];
-            //res[edge[0]]+=edge[1];
-            if(!edges.containsKey(edge[0])) {
-                map.get(cur_node)[edge[0]]=edge[1];
-                //res[edge[0]]=edge[1];
-            } else {
-                helper(edge[0], edges, res, map,pieces);
-                isEnd=true;
-            }
+            if(!edges.containsKey(edges.get(cur_node).get(j)[0])) map.get(cur_node)[edges.get(cur_node).get(j)[0]]=edges.get(cur_node).get(j)[1];
+            else helper(edges.get(cur_node).get(j)[0], edges, res, map,pieces);
         }
-        if(!isEnd) return;
         //gets the edges
-        for (Integer[] edge : edges.get(cur_node)) {
-            if(!edges.containsKey(edge[0])) {
-                continue;
-            }
-            for (int i=0; i<map.get(edge[0]).length ;i++) {
-                map.get(cur_node)[i]+=map.get(edge[0])[i]*edge[1];
+        for(int j=0; j < edges.get(cur_node).size(); j++) {
+            if(!edges.containsKey(edges.get(cur_node).get(j)[0])) continue;
+
+            for (int i=0; i<map.get(edges.get(cur_node).get(j)[0]).length ;i++) {
+                map.get(cur_node)[i]+=map.get(edges.get(cur_node).get(j)[0])[i]*edges.get(cur_node).get(j)[1];
             }
         }
     }
@@ -83,7 +72,7 @@ public class A3Q2 {
         long[] pieces_4= {0,0,2,2,3,1,2,3,1,4};
         int[][] instructions_4 = {{0,3,1},{1,3,2},{2,4,1},{3,4,3},{3,5,1},{3,8,3}};
 
-        System.out.println(Arrays.toString(num_pieces(pieces_4,instructions_4)));
+        System.out.println(Arrays.toString(num_pieces(pieces_3,instructions_3)));
     }
 
 
