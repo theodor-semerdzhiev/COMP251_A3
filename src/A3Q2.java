@@ -47,7 +47,6 @@ public class A3Q2 {
         map.put(cur_node, arr);
         for(int j=0; j < edges.get(cur_node).size(); j++) {
             map.get(cur_node)[edges.get(cur_node).get(j)[0]]+=edges.get(cur_node).get(j)[1];
-
             if(!edges.containsKey(edges.get(cur_node).get(j)[0])) map.get(cur_node)[edges.get(cur_node).get(j)[0]]=edges.get(cur_node).get(j)[1];
             else helper(edges.get(cur_node).get(j)[0], edges, res, map,pieces);
         }
