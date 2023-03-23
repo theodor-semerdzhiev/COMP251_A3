@@ -2,15 +2,13 @@ import java.util.*;
 
 
 public class A3Q1 {
-
-    static HashSet<ArrayList<Integer>> visited = new HashSet();
-    static HashMap<ArrayList<Integer>, Integer> map = new HashMap<>();
     public static int find_exit(int time, String[][] jail) {
-
+        HashSet<Integer> visited = new HashSet();
+        HashMap<Integer, Integer> map = new HashMap<>();
         for(int i=0; i < jail.length; i++) {
-            for(int j=0; j <jail[i].length; j++) {
+            for(int j=jail[i].length-1; j>=0; j--) {
                 if (jail[i][j].equals("S")){
-                    int res=solution(jail,i,j);
+                    int res=solution(jail,i,j,0,time, visited, map);
                     if (res <= time) 	return res;
                     else				return -1;
                 }
@@ -19,36 +17,45 @@ public class A3Q1 {
         return -1;
     }
 
-    public static int solution(String[][] grid,int row, int column) {
-        if(row == 0 || column == 0 || row == grid.length-1 || column == grid[row].length-1) return 0;
-        ArrayList<Integer> arr= new ArrayList<>(2);
-        arr.add(row);
-        arr.add(column);
-        if(visited.contains(arr)) return Integer.MAX_VALUE-1;
-        if(map.containsKey(arr)) return map.get(arr);
+    public static int solution(String[][] grid,int row, int column, int time, int maxtime,HashSet<Integer> visited,HashMap<Integer, Integer> map) {
+        if  (row == -1 ||
+                column == -1 ||
+                row == grid.length ||
+                column == grid[row].length)
+            return Integer.MAX_VALUE-1;
 
+        if(visited.contains(hash(grid,row,column))) return Integer.MAX_VALUE-1;
+        if(time > maxtime) return Integer.MAX_VALUE-1;
 
+        if( row == 0 ||
+            column == 0 ||
+            row == grid.length-1 ||
+            column == grid[row].length-1)
+            return 0;
+
+        if(map.containsKey(hash(grid,row,column))) return map.get(hash(grid,row,column));
 
         int val1=Integer.MAX_VALUE-1;
         int val2=Integer.MAX_VALUE-1;
         int val3=Integer.MAX_VALUE-1;
         int val4=Integer.MAX_VALUE-1;
 
-        visited.add(arr);
+        visited.add(hash(grid,row,column));
 
-        if(grid[row+1][column].equals("U") || grid[row+1][column].equals("0")) val1=solution(grid, row+1, column);
-        if(grid[row-1][column].equals("D") || grid[row-1][column].equals("0")) val2=solution(grid, row-1, column);
-        if(grid[row][column-1].equals("R") || grid[row][column-1].equals("0")) val3=solution(grid, row, column-1);
-        if(grid[row][column+1].equals("L") || grid[row][column+1].equals("0")) val4=solution(grid, row, column+1);
+        if(new String("U0").contains(grid[row+1][column])) val1=solution(grid, row+1, column,time+1, maxtime,visited,map);
+        if(new String("D0").contains(grid[row-1][column])) val2=solution(grid, row-1, column,time+1, maxtime,visited,map);
+        if(new String("R0").contains(grid[row][column-1])) val3=solution(grid, row, column-1,time+1, maxtime,visited,map);
+        if(new String("L0").contains(grid[row][column+1])) val4=solution(grid, row, column+1,time+1, maxtime,visited,map);
 
-        visited.remove(arr);
+        visited.remove(hash(grid,row,column));
 
-        map.put(arr,Math.min(val1,Math.min(val2,Math.min(val3,val4))));
+        map.put(hash(grid,row,column),1+Math.min(val1,Math.min(val2,Math.min(val3,val4))));
 
-        return 1+map.get(arr);
+        return map.get(hash(grid,row,column));
     }
-
-
+    public static int hash( String[][] grid,int row, int column) {
+        return grid.length * row + column;
+    }
     public static void main(String[] args) {
         String[][] test1=   {{"1","1","1","1"},
                             {"1","S","0","1"},
@@ -63,7 +70,23 @@ public class A3Q1 {
                             {"1","S","L","1"},
                             {"0","R","1","1"}};
 
-        System.out.println(find_exit(100,test7));
+        String[][] custom_test =   {{"1","L","1","1","1","1","1"},
+                                    {"1","0","1","0","0","0","1"},
+                                    {"1","0","R","0","1","0","1"},
+                                    {"1","S","1","0","1","0","1"},
+                                    {"1","0","1","0","1","0","1"},
+                                    {"1","0","1","0","1","0","1"},
+                                    {"1","0","0","0","1","0","1"},
+                                    {"1","0","1","0","1","0","1"},
+                                    {"1","0","1","0","1","0","1"},
+                                    {"1","1","1","1","1","1","1"}};
+
+
+        String[][] custom_test1=   {{"1","1","1","1"},
+                                    {"1","S","0","1"},
+                                    {"1","0","1","1"},
+                                    {"0","L","1","1"}};
+        System.out.println(find_exit(100,custom_test1));
     }
 
 }

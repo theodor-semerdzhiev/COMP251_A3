@@ -4,6 +4,8 @@ public class A3Q2 {
     public static long[] num_pieces(long[] pieces, int[][] instructions) {
         HashMap<Integer,ArrayList<Integer[]>> edges = new HashMap<>();
         HashMap<Integer, int[]> map = new HashMap<>();
+
+        //creates a hashmap for out edges for a fast lookup
         for(int i=0 ; i< instructions.length; i++) {
             if(edges.containsKey(instructions[i][1])){
                 Integer[] arr = {instructions[i][0], instructions[i][2]};
@@ -15,12 +17,14 @@ public class A3Q2 {
                 edges.put(instructions[i][1], arr);
             }
         }
+
         long[] res = new long[pieces.length];
         //for(Integer e: edges.keySet()) helper(e, edges, res, map,pieces);
         for(int i=0; i<pieces.length; i++) if(edges.containsKey(i)) helper(i, edges, res, map,pieces);
 
         for(Integer e : map.keySet()) System.out.println(e+" :"+Arrays.toString(map.get(e)));
 
+        //we compute are final result array
         for(int i=0; i<res.length; i++) {
             if(pieces[i] != 0) {
                 if (!map.containsKey(i)) {
@@ -41,19 +45,33 @@ public class A3Q2 {
     }
 
     public static void helper(int cur_node,HashMap<Integer,ArrayList<Integer[]>> edges, long[] res, HashMap<Integer, int[]> map, long[] pieces) {
+        //if we already computed the instructions for cur_node, then we return
+        //this also mean all of its children have already been computed
         if(map.containsKey(cur_node)) return;
 
+        //insert cur_node into the map HashMap
         int[] arr = new int[res.length];
         map.put(cur_node, arr);
+        //iterate through every out going edge of cur_node
         for(int j=0; j < edges.get(cur_node).size(); j++) {
-            map.get(cur_node)[edges.get(cur_node).get(j)[0]]+=edges.get(cur_node).get(j)[1];
-            if(!edges.containsKey(edges.get(cur_node).get(j)[0])) map.get(cur_node)[edges.get(cur_node).get(j)[0]]=edges.get(cur_node).get(j)[1];
-            else helper(edges.get(cur_node).get(j)[0], edges, res, map,pieces);
+            //next node is not a leaf (i.e its in the edges set (therefor it has outgoing edges), we have a recursive call
+            if(edges.containsKey(edges.get(cur_node).get(j)[0])) {
+                map.get(cur_node)[edges.get(cur_node).get(j)[0]] += edges.get(cur_node).get(j)[1];
+                helper(edges.get(cur_node).get(j)[0], edges, res, map, pieces);
+            }
         }
-        //gets the edges
-        for(int j=0; j < edges.get(cur_node).size(); j++) {
-            if(!edges.containsKey(edges.get(cur_node).get(j)[0])) continue;
 
+        //iterates through cur_nodes out going edge nodes
+        for(int j=0; j < edges.get(cur_node).size(); j++) {
+            //if a connected node is not in the edges set, then it's a leaf, therefor we add the weight of that edge into
+            //the instructions array for cur_node stored in map (hashmap)
+            if(!edges.containsKey(edges.get(cur_node).get(j)[0])) {
+                map.get(cur_node)[edges.get(cur_node).get(j)[0]]=edges.get(cur_node).get(j)[1];
+                continue;
+            }
+            //if its not a leaf then we have already computed the material needed to create that node
+            //we iterate through that node's corresponding instructions array, we add those values to the cur_nodes' instructions array multiplied
+            //by the weight of that edge
             for (int i=0; i<map.get(edges.get(cur_node).get(j)[0]).length ;i++) {
                 map.get(cur_node)[i]+=map.get(edges.get(cur_node).get(j)[0])[i]*edges.get(cur_node).get(j)[1];
             }
