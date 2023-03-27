@@ -59,7 +59,31 @@ public class A3Q2 {
             }
         }
     }
-
+    public static void custome_testcase() {
+        long[] pieces4 = {53,1,0,3,0,4,0,1,1,0,3,0,1,0};
+        int[][] instructions4 ={
+                {6,2,2},
+                {2,13,2},
+                {13,12,2},
+                {13,7,1},
+                {13,11,3},
+                {7,3,1},
+                {7,4,2},
+                {3,1,3},
+                {4,1,1},
+                {11,5,2},
+                {12,9,1},
+                {12,10,3},
+                {9,5,1},
+                {10,5,2},
+                {5,1,3},
+                {5,8,2},
+                {5,4,1}
+        };
+        long[] pieces = pieces4;
+        int[][] inst = instructions4;
+        System.out.println(Arrays.toString(num_pieces(pieces, inst)));
+    }
     public static void main(String[] args) {
         long[] pieces_1= {0,0,0,0,3};
         int[][] instructions_1 = {{0,1,3},{1,4,1},{2,4,1},{3,4,2}};
@@ -74,6 +98,7 @@ public class A3Q2 {
         int[][] instructions_4 = {{0,3,1},{1,3,2},{2,4,1},{3,4,3},{3,5,1},{3,8,3}};
 
         System.out.println(Arrays.toString(num_pieces(pieces_3,instructions_3)));
+        custome_testcase();
     }
 
 
