@@ -38,8 +38,11 @@ public class FordFulkerson {
 
         //WGraph ResidualGraph = new WGraph(graph);
         ArrayList<Integer> path;
+        WGraph ResidualGraph = new WGraph(graph);
+        for(Edge e: ResidualGraph.getEdges()) {
+            e.weight=0;
+        }
         path=pathDFS(graph.getSource(), graph.getDestination(), graph);
-
         while(path != null) {
             int pathflow=Integer.MAX_VALUE;
             for(int i =0 ; i< path.size()-1; i++) {
@@ -49,13 +52,14 @@ public class FordFulkerson {
                 graph.getEdge(path.get(i),path.get(i+1)).weight -= pathflow;
                 Edge reverse = graph.getEdge(path.get(i+1),path.get(i));
                 if (reverse != null)  reverse.weight+=pathflow;
+                ResidualGraph.getEdge(path.get(i),path.get(i+1)).weight += pathflow;
             }
             maxFlow+=pathflow;
 
             path=pathDFS(graph.getSource(), graph.getDestination(), graph);
         }
 
-        answer += maxFlow + "\n" + graph.toString();
+        answer += maxFlow + "\n" + ResidualGraph.toString();
         return answer;
     }
 
@@ -103,8 +107,8 @@ public class FordFulkerson {
 
     public static void main(String[] args){
         String file = "C:\\Users\\Theodor Semerdzhiev\\intelliJ\\COMP251_A3\\src\\ff2.txt";
-        File f = new File(file);
-        WGraph g = new WGraph(file);
+        //File f = new File();
+        //WGraph g = new WGraph(args[0]);
 
         test2();
         //System.out.println(fordfulkerson(g));
