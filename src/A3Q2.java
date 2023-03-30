@@ -104,22 +104,52 @@ public class A3Q2 {
             }
         }
 
-        LinkedList<Integer> list = new LinkedList<>();
+        ArrayList<Integer> list = new ArrayList<>();
         for(int i =0 ;i<res.length; i++) topo_sort(list,edges,visited, i);
 
+        //int[][] reqs = new int[pieces.length][pieces.length];
+        HashMap<Integer,int[]> maps = new HashMap<>();
+
+        for(int k = 0; k < list.size(); k++) {
+            if(!edges.containsKey(list.get(k))) {
+                res[list.get(k)]+=pieces[list.get(k)];
+                continue;
+            }
+            maps.put(list.get(k),new int[pieces.length]);
+
+            for(int n=0; n < edges.get(list.get(k)).size(); n++) {
+            //for(int[] neighbor: edges.get(list.get(k))) {
+                if(!edges.containsKey(edges.get(list.get(k)).get(n)[0])) {
+                    maps.get(list.get(k))[edges.get(list.get(k)).get(n)[0]]=edges.get(list.get(k)).get(n)[1];
+                    continue;
+                }
+                for(int i=0 ; i< maps.get(list.get(k)).length; i++) {
+                    maps.get(list.get(k))[i]+=maps.get(edges.get(list.get(k)).get(n)[0])[i]*edges.get(list.get(k)).get(n)[1];
+
+                }
+                maps.get(list.get(k))[edges.get(list.get(k)).get(n)[0]]+=edges.get(list.get(k)).get(n)[1];
+            }
+            if(pieces[list.get(k)] == 0) continue;
+            for(int i=0 ; i < pieces.length; i++) {
+
+                if(i == list.get(k)) {
+                    res[list.get(k)]+=pieces[list.get(k)];
+                }
+                res[i]+=maps.get(list.get(k))[i]*pieces[list.get(k)];
+            }
+        }
 
 
-        System.out.println(list.toString());
-
+        for(Integer e: maps.keySet()) System.out.println("for " + e + " :"+ Arrays.toString(maps.get(e)));
 
         return res;
     }
 
-    public static void topo_sort(LinkedList<Integer> list, HashMap<Integer,ArrayList<int[]>> edges, HashSet<Integer> visited, Integer cur_node) {
+    public static void topo_sort(ArrayList<Integer> list, HashMap<Integer,ArrayList<int[]>> edges, HashSet<Integer> visited, Integer cur_node) {
         if(visited.contains(cur_node)) return;
         visited.add(cur_node);
         if(!edges.containsKey(cur_node)) {
-            list.addLast(cur_node);
+            list.add(cur_node);
             return;
         }
         for(int i=0; i< edges.get(cur_node).size(); i++) {
@@ -127,9 +157,8 @@ public class A3Q2 {
             topo_sort(list,edges, visited,edges.get(cur_node).get(i)[0]);
         }
 
-        list.addLast(cur_node);
+        list.add(cur_node);
     }
-
     public static void custom_testcase() {
         long[] pieces4 = {53,1,0,3,0,4,0,1,1,0,3,0,1,0};
         int[][] instructions4 ={
@@ -154,6 +183,7 @@ public class A3Q2 {
         long[] pieces = pieces4;
         int[][] inst = instructions4;
         System.out.println(Arrays.toString(num_pieces(pieces, inst)));
+        System.out.println(Arrays.toString(num_pieces1(pieces, inst)));
     }
     public static void main(String[] args) {
         long[] pieces_1= {0,0,0,0,3};
@@ -168,8 +198,9 @@ public class A3Q2 {
         long[] pieces_4= {0,0,2,2,3,1,2,3,1,4};
         int[][] instructions_4 = {{0,3,1},{1,3,2},{2,4,1},{3,4,3},{3,5,1},{3,8,3}};
 
-        System.out.println(Arrays.toString(num_pieces1(pieces_3,instructions_3)));
-        //custom_testcase();
+        System.out.println(Arrays.toString(num_pieces1(pieces_4,instructions_4)));
+        System.out.println(Arrays.toString(num_pieces(pieces_4,instructions_4)));
+        custom_testcase();
     }
 
 

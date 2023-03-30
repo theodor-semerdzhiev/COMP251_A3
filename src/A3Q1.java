@@ -56,6 +56,92 @@ public class A3Q1 {
     public static int hash( String[][] grid,int row, int column) {
         return grid.length * row + column;
     }
+
+    public static int find_exit1(int time, String[][] jail) {
+        int[] start_tile = findSource(jail);
+
+        LinkedList<int[]> q = new LinkedList<>();
+        q.addLast(start_tile);
+        HashSet<Integer> visited = new HashSet<>();
+        LinkedList<int[]> cur_nodes = new LinkedList<>();
+        visited.add(hash(jail, start_tile[0], start_tile[1]));
+        int turns=0;
+
+        while(!q.isEmpty()) {
+            if (turns > time) return -1;
+
+            while(!q.isEmpty()) cur_nodes.add(q.removeFirst());
+
+
+            while(!cur_nodes.isEmpty()) {
+                int[] popped_coord = cur_nodes.removeFirst();
+                if(isFree(jail,popped_coord)) return turns;
+
+
+                if (popped_coord[0] -1 != -1 &&
+                        !visited.contains(hash(jail, popped_coord[0] - 1, popped_coord[1])) &&
+                        new String("D0").contains(jail[popped_coord[0] - 1][popped_coord[1]])) {
+
+                    int[] arr = {popped_coord[0] - 1, popped_coord[1]};
+                    q.addLast(arr);
+                    visited.add(hash(jail, popped_coord[0] - 1, popped_coord[1]));
+                }
+                if (popped_coord[0]+1 != jail.length &&
+                        !visited.contains(hash(jail, popped_coord[0] + 1, popped_coord[1])) &&
+                        new String("U0").contains(jail[popped_coord[0] + 1][popped_coord[1]])) {
+
+                    int[] arr = {popped_coord[0] + 1, popped_coord[1]};
+                    System.out.println(Arrays.toString(arr));
+                    q.addLast(arr);
+                    visited.add(hash(jail, popped_coord[0] + 1, popped_coord[1]));
+                }
+                if (popped_coord[1]-1 != -1 &&
+                        !visited.contains(hash(jail, popped_coord[0], popped_coord[1] - 1)) &&
+                        new String("R0").contains(jail[popped_coord[0]][popped_coord[1]-1])) {
+                    int[] arr = {popped_coord[0], popped_coord[1] - 1};
+                    System.out.println(Arrays.toString(arr));
+                    q.addLast(arr);
+                    visited.add(hash(jail, popped_coord[0], popped_coord[1] - 1));
+                }
+                if (popped_coord[1]+1 != jail[popped_coord[0]].length &&
+                        !visited.contains(hash(jail, popped_coord[0], popped_coord[1] + 1)) &&
+                        new String("L0").contains(jail[popped_coord[0]][popped_coord[1]+1])) {
+
+                    int[] arr = {popped_coord[0], popped_coord[1] + 1};
+                    System.out.println(Arrays.toString(arr));
+                    q.addLast(arr);
+                    visited.add(hash(jail, popped_coord[0], popped_coord[1] + 1));
+
+                }
+            }
+            turns++;
+
+        }
+
+
+        return -1;
+    }
+    public static boolean isFree(String[][] jail, int[] popped_coord) {
+        if (popped_coord[0] == 0 ||
+                popped_coord[0] == jail.length - 1 ||
+                popped_coord[1] == 0 ||
+                popped_coord[1] == jail[popped_coord[0]].length - 1) {
+
+            return true;
+        }
+        return false;
+    }
+    public static int[] findSource(String[][] jail) {
+        for(int i=0; i< jail.length; i++) {
+            for(int j=0; j< jail[i].length ;j++) {
+                if(jail[i][j].equals("S")) {
+                    int[] arr = {i,j};
+                    return arr;
+                }
+            }
+        }
+        return null;
+    }
     public static void main(String[] args) {
         String[][] test1=   {{"1","1","1","1"},
                             {"1","S","0","1"},
@@ -95,7 +181,7 @@ public class A3Q1 {
                                     {"1","0","0","0","1","1","0","1","1","1","1"},
                                     {"1","1","1","1","1","1","0","1","1","1","1"}};
 
-        System.out.println(find_exit(100,custom_test2));
+        System.out.println(find_exit1(100,custom_test1));
     }
 
 }
